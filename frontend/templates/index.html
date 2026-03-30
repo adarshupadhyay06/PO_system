@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PO Management — IV Innovations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <!-- ── Login Screen ─────────────────────────────────── -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <div class="login-logo">
+        <span class="logo-mark">IV</span>
+        <span class="logo-text">INNOVATIONS</span>
+      </div>
+      <h1 class="login-title">PO MANAGEMENT<br/><em>SYSTEM</em></h1>
+      <p class="login-sub">Purchase Order · Vendor · Product Control</p>
+
+      <div class="login-tabs">
+        <button class="tab-btn active" data-tab="demo">Demo Login</button>
+        <button class="tab-btn" data-tab="google">Google OAuth</button>
+      </div>
+
+      <div id="tab-demo" class="tab-content active">
+        <div class="field">
+          <label>USERNAME</label>
+          <input id="login-user" type="text" placeholder="admin" value="admin" />
+        </div>
+        <div class="field">
+          <label>PASSWORD</label>
+          <input id="login-pass" type="password" placeholder="••••••••" value="admin123" />
+        </div>
+        <div id="login-error" class="error-msg hidden"></div>
+        <button id="login-btn" class="btn-primary full">SIGN IN →</button>
+        <p class="hint">Demo: <strong>admin / admin123</strong> &nbsp;|&nbsp; <strong>buyer / buyer123</strong></p>
+      </div>
+
+      <div id="tab-google" class="tab-content">
+        <div class="oauth-info">
+          <p>Sign in with your Google account via OAuth 2.0 + JWT.</p>
+          <p class="hint">Configure <code>GOOGLE_CLIENT_ID</code> in <code>.env</code> to enable.</p>
+        </div>
+        <a href="/auth/google/login" class="btn-google">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continue with Google
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── App Shell ─────────────────────────────────────── -->
+  <div id="app" class="app hidden">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="logo-mark sm">IV</span>
+        <span>PO System</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-page="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </a>
+        <a href="#" class="nav-item" data-page="orders">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Purchase Orders
+        </a>
+        <a href="#" class="nav-item" data-page="create-po">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          New PO
+        </a>
+        <a href="#" class="nav-item" data-page="vendors">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Vendors
+        </a>
+        <a href="#" class="nav-item" data-page="products">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          Products
+        </a>
+      </nav>
+      <div class="sidebar-user">
+        <div class="user-avatar" id="user-initials">AD</div>
+        <div class="user-info">
+          <div id="user-name" class="user-name">Admin User</div>
+          <div id="user-role" class="user-role">admin</div>
+        </div>
+        <button id="logout-btn" class="logout-btn" title="Logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+      <div id="page-dashboard" class="page active">
+        <div class="page-header">
+          <h2>DASHBOARD</h2>
+          <span class="breadcrumb">Overview</span>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">TOTAL POs</div>
+            <div class="stat-value" id="stat-total">—</div>
+          </div>
+          <div class="stat-card accent">
+            <div class="stat-label">PENDING</div>
+            <div class="stat-value" id="stat-pending">—</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">APPROVED</div>
+            <div class="stat-value" id="stat-approved">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">TOTAL VALUE</div>
+            <div class="stat-value" id="stat-value">—</div>
+          </div>
+        </div>
+        <div class="section-header">
+          <h3>RECENT PURCHASE ORDERS</h3>
+          <button class="btn-outline" onclick="navigate('create-po')">+ New PO</button>
+        </div>
+        <div id="dashboard-table-wrap">
+          <table class="data-table" id="dashboard-table">
+            <thead><tr><th>REF NO</th><th>VENDOR</th><th>AMOUNT</th><th>STATUS</th><th>DATE</th><th>ACTION</th></tr></thead>
+            <tbody id="dashboard-tbody"><tr><td colspan="6" class="loading-row">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── Orders List ── -->
+      <div id="page-orders" class="page">
+        <div class="page-header">
+          <h2>PURCHASE ORDERS</h2>
+          <div class="header-actions">
+            <select id="filter-status" class="select-input">
+              <option value="">All Statuses</option>
+              <option>DRAFT</option><option>PENDING</option><option>APPROVED</option>
+              <option>ORDERED</option><option>RECEIVED</option><option>CANCELLED</option>
+            </select>
+            <button class="btn-primary" onclick="navigate('create-po')">+ New PO</button>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>REF NO</th><th>VENDOR</th><th>SUBTOTAL</th><th>TAX 5%</th><th>TOTAL</th><th>STATUS</th><th>DATE</th><th>ACTIONS</th></tr></thead>
+          <tbody id="orders-tbody"><tr><td colspan="8" class="loading-row">Loading…</td></tr></tbody>
+        </table>
+      </div>
+
+      <!-- ── Create PO ── -->
+      <div id="page-create-po" class="page">
+        <div class="page-header">
+          <h2>CREATE PURCHASE ORDER</h2>
+          <span class="breadcrumb">New PO</span>
+        </div>
+        <form id="create-po-form" class="po-form" onsubmit="return false;">
+          <div class="form-section">
+            <h3>ORDER DETAILS</h3>
+            <div class="form-row">
+              <div class="field">
+                <label>VENDOR <span class="req">*</span></label>
+                <select id="po-vendor" class="select-input" required>
+                  <option value="">— Select Vendor —</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>NOTES</label>
+                <input id="po-notes" type="text" placeholder="Optional delivery instructions…" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="section-header">
+              <h3>LINE ITEMS</h3>
+              <button type="button" id="add-row-btn" class="btn-outline">+ Add Product</button>
+            </div>
+            <div class="line-items-header">
+              <span>PRODUCT</span><span>QTY</span><span>UNIT PRICE (₹)</span><span>LINE TOTAL</span><span>AI DESC</span><span></span>
+            </div>
+            <div id="line-items-container"></div>
+            <div id="no-items-msg" class="empty-hint">Click "+ Add Product" to add items to this order.</div>
+          </div>
+
+          <div class="form-section totals-section">
+            <div class="totals-block">
+              <div class="total-row"><span>SUBTOTAL</span><span id="t-subtotal">₹ 0.00</span></div>
+              <div class="total-row tax"><span>TAX (5%)</span><span id="t-tax">₹ 0.00</span></div>
+              <div class="total-row grand"><span>TOTAL</span><span id="t-total">₹ 0.00</span></div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-outline" onclick="navigate('orders')">Cancel</button>
+            <button type="button" id="submit-po-btn" class="btn-primary">SUBMIT ORDER →</button>
+          </div>
+        </form>
+
+        <!-- AI Description Modal -->
+        <div id="ai-modal" class="modal hidden">
+          <div class="modal-card">
+            <div class="modal-header">
+              <h3>✦ AI AUTO-DESCRIPTION</h3>
+              <button onclick="closeAIModal()" class="modal-close">×</button>
+            </div>
+            <div id="ai-product-name" class="ai-product-name"></div>
+            <div id="ai-result" class="ai-result">Generating…</div>
+            <button onclick="closeAIModal()" class="btn-primary full">Done</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Vendors ── -->
+      <div id="page-vendors" class="page">
+        <div class="page-header">
+          <h2>VENDORS</h2>
+          <button class="btn-primary" onclick="openVendorModal()">+ Add Vendor</button>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>NAME</th><th>CONTACT</th><th>EMAIL</th><th>PHONE</th><th>RATING</th><th>STATUS</th></tr></thead>
+          <tbody id="vendors-tbody"><tr><td colspan="6" class="loading-row">Loading…</td></tr></tbody>
+        </table>
+        <div id="vendor-modal" class="modal hidden">
+          <div class="modal-card">
+            <div class="modal-header"><h3>ADD VENDOR</h3><button onclick="closeVendorModal()" class="modal-close">×</button></div>
+            <div class="field"><label>NAME *</label><input id="v-name" type="text" /></div>
+            <div class="field"><label>CONTACT *</label><input id="v-contact" type="text" /></div>
+            <div class="field"><label>EMAIL</label><input id="v-email" type="email" /></div>
+            <div class="field"><label>PHONE</label><input id="v-phone" type="text" /></div>
+            <div class="field"><label>RATING (1-5)</label><input id="v-rating" type="number" min="1" max="5" step="0.1" value="3.0" /></div>
+            <div id="v-error" class="error-msg hidden"></div>
+            <div class="form-actions">
+              <button class="btn-outline" onclick="closeVendorModal()">Cancel</button>
+              <button class="btn-primary" onclick="submitVendor()">SAVE VENDOR</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Products ── -->
+      <div id="page-products" class="page">
+        <div class="page-header">
+          <h2>PRODUCTS</h2>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>NAME</th><th>SKU</th><th>CATEGORY</th><th>UNIT PRICE</th><th>STOCK</th><th>UOM</th></tr></thead>
+          <tbody id="products-tbody"><tr><td colspan="6" class="loading-row">Loading…</td></tr></tbody>
+        </table>
+      </div>
+
+      <!-- ── PO Detail Modal ── -->
+      <div id="po-detail-modal" class="modal hidden">
+        <div class="modal-card wide">
+          <div class="modal-header">
+            <h3 id="po-detail-ref">PO DETAIL</h3>
+            <button onclick="closePOModal()" class="modal-close">×</button>
+          </div>
+          <div id="po-detail-body"></div>
+          <div class="form-actions" id="po-detail-actions"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

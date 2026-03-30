@@ -1,0 +1,54 @@
+"""
+PO Management System — FastAPI Application
+==========================================
+Run: uvicorn main:app --reload --port 8000
+"""
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
+from fastapi.responses import HTMLResponse
+
+from core.config import settings
+from routers import auth, vendors, products, purchase_orders, ai_description
+
+app = FastAPI(
+    title="PO Management System",
+    description="Purchase Order Management — IV Innovations Assignment",
+    version="1.0.0",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+)
+
+# ── CORS ──────────────────────────────────────────────────────
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],          # tighten in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ── Static files & templates ──────────────────────────────────
+app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
+templates = Jinja2Templates(directory="frontend/templates")
+
+# ── API Routers ───────────────────────────────────────────────
+app.include_router(auth.router)
+app.include_router(vendors.router,          prefix="/api")
+app.include_router(products.router,         prefix="/api")
+app.include_router(purchase_orders.router,  prefix="/api")
+app.include_router(ai_description.router,   prefix="/api")
+
+
+# ── SPA catch-all — serve the frontend ───────────────────────
+@app.get("/{full_path:path}", response_class=HTMLResponse, include_in_schema=False)
+async def spa(request: Request, full_path: str):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+# ── Health check ──────────────────────────────────────────────
+@app.get("/health", tags=["Health"], include_in_schema=False)
+async def health():
+    return {"status": "ok"}
